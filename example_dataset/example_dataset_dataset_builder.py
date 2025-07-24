@@ -2,6 +2,7 @@ from typing import Iterator, Tuple, Any
 
 import os
 import glob
+import time
 import pickle
 import numpy as np
 import tensorflow as tf
@@ -273,16 +274,16 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
             }
 
             return episode_dir, sample
+        
+        start_time = time.time()
 
-        episode_dirs = []
+        episode_dirs = [os.path.join(base_path, episode_name) for episode_name in os.listdir(base_path)]
 
-        # base_path = "./data/train"
-        for episode_name in os.listdir(base_path):
-            episode_dirs.append(os.path.join(base_path, episode_name))
-            
+        end_time = time.time()
+
+        print(f"========================== {end_time - start_time} 秒 =================================")
 
         for episode_dir in episode_dirs:
-            
             yield _parse_episode(episode_dir)
 
         # 中文：（可选）大数据量可使用 Apache Beam 实现并行加载
