@@ -20,7 +20,9 @@ IMAGE_RES = (720, 1280)
 # Notice:
 #        - 这个版本的实现依赖于我自己的理解， action_dict 字段是控制器的值
 #        - 这个图片的要求格式是 .jpeg, 要在 run_env_copy.py 中修改 .png -> .jpeg, cv2 的库会自动解析生成 .jpeg
-#        - TODO: 测试一下是不是一定需要 .jepg
+#           - 上面这一点, 0724-14:43 测试过了, 及时是丢 .png 图像进去也可以一样处理
+#        - TODO: 测试一下是不是一定需要 .jepg --------- 已经做完了, .png 也可以
+#        - TODO: 测试一下文件名的问题
 #        - TODO: 验证一下是否满足 RLDS 格式的要求
 #        - TODO: 尝试用测试的数据集进行 fine-tune
 #        - TODO: 采数据，
@@ -279,14 +281,15 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
 
         episode_dirs = [os.path.join(base_path, episode_name) for episode_name in os.listdir(base_path)]
 
+        for episode_dir in episode_dirs:
+            yield _parse_episode(episode_dir)
+        
         end_time = time.time()
 
         print(f"========================== {end_time - start_time} 秒 =================================")
 
-        for episode_dir in episode_dirs:
-            yield _parse_episode(episode_dir)
-
-        # 中文：（可选）大数据量可使用 Apache Beam 实现并行加载
+        # （可选）大数据量可使用 Apache Beam 实现并行加载
+        # 实际测试过, 没用
         # beam = tfds.core.lazy_imports.apache_beam
         # return (
         #         beam.Create(episode_paths)
