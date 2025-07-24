@@ -274,12 +274,9 @@ class ExampleDataset(tfds.core.GeneratorBasedBuilder):
 
             return episode_dir, sample
 
-        episode_dirs = []
 
         # base_path = "./data/train"
-        for episode_name in os.listdir(base_path):
-            episode_dirs.append(os.path.join(base_path, episode_name))
-            
+        episode_dirs = [os.path.join(base_path, name) for name in os.listdir(base_path)]
 
         for episode_dir in episode_dirs:
             
